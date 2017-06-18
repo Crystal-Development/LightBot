@@ -1,0 +1,6 @@
+//prefix is obv the prefix ur bot will use. edit to whatever ;))
+{
+"prefix" :"-",
+"token"  : "PUT TOKEN HERE",
+"version" : "version you want"
+}
