@@ -130,10 +130,10 @@ if(message.content == config.prefix + "version"){
 
 
 
-if(message.content == config.prefix + "restart") {
+if(message.content == config.prefix + "r"){
 if(theirperm == 5) {
   //you can edit the text here   VVVV   to what u want the bot to say when its restarting
-    message.channel.send(':ok_hand: :sleeping: Restarting...').then(() => {
+    message.channel.send(':white_check_mark: Restarting...').then(() => {
         process.exitCode = 1;
         process.exit();
 
@@ -143,7 +143,7 @@ if(theirperm == 5) {
 
 if(theirperm <= 4) {
   //what the bot says if an unauthorized uses says "-restart"
-    message.channel.send("I'm sorry, " + message.author + ". I'm afriad I can't let you do that.")
+    message.channel.send("Invalid permissions. Only administrators can do that.")
 }
 
 
@@ -156,6 +156,7 @@ if(theirperm <= 4) {
 //* Startup stuff
 bot.login(config.token)
 bot.on("ready",function() {
-bot.user.setGame(config.prefix + "set what the bot is playing");
+bot.user.setGame(config.prefix + "help");
+bot.user.setName("Hackerman")
 
 });
