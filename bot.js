@@ -89,10 +89,14 @@ bot.on("message", message => {
     }
 
 
+
+    //help
+    if (message.content.startsWith(config.prefix + "help")) {
+        message.delete(" ");
+        message.author.send("LightBot Commands:\n```kick - Kick A User (Staff Only)\nban - Ban A User (Staff Only)\nsay - Repeats Your Message\nembed - Repeats You Message As An Embed\nreport <@mention> <reason> - Reports A User To Staff\nroll - Roll the Dice\nversion - Says The Bot's Version\nping - Shows The Bot's Ping\nrestart - Restarts The Bot (Staff Only)\ninvite - Sends Invite Link (Staff Only)\nnick - Sets a user's nickname (Staff ?Only)\nannounce - Sends a message to #news tagging everyone (Staff Only)```");
+    }
+
     // Simple roll the dice command
-
-
-
     if (message.content == config.prefix + "roll") { //command args
 
 
@@ -107,20 +111,57 @@ bot.on("message", message => {
 
         message.channel.send('Version ``' + config.version + '``');
     }
-    //kick command
-    if (message.content.startsWith(config.prefix + "kick")) {
-        const user = message.mentions.users.first();
-        const member = message.guild.member(user);
+
+    //nickname
+    if (message.content.startsWith(config.prefix + "nick")) {
+        message.delete();
+        const member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
-        if (theirperm == 4) {
-            message.channel.send(user + " has been kicked, say goodbye.");
-            user.sendMessage("You have been banned from our guild for " + args);
-            member.kick();
+        member.setNickname(args);
+        message.channel.send(":white_check_mark: " + member + "'s nick has been changed.")
+            .then(m => m.delete(5000))
+        if (theirperm <= 3) {
+            message.channel.send("Sorry, you aren't able to do that.");
+        }
+    }
+
+    
+
+    //announce
+    if (message.content.startsWith(config.prefix + "announce")) {
+        message.delete();
+        let args = message.content.split(" ").slice(1).join(" ");
+        if (theirperm >= 3) {
+            bot.channels.get('323201519891513345').send("@everyone :loudspeaker: " + args)
+            };
+        
+        if (theirperm <= 3) {
+            message.channel.send("Sorry, you aren't able to do that.");
+        }
+    }
+
+    //ban command
+    if (message.content.startsWith(config.prefix + "ban")) {
+        const member = message.mentions.members.first();
+        let args = message.content.split(" ").slice(2).join(" ");
+        if (theirperm >= 3) {
+            message.channel.send(":white_check_mark:" + member + " has been banned.");
+            member.send(":warning: You have been banned from our server by " + message.author + "\n\nReason:\n```" + args + "```").then(() => {
+                member.ban();
+            });
         }
         if (theirperm <= 3) {
             message.channel.send("Sorry, you aren't able to do that.");
         }
     }
+
+    //ping
+    if (message.content.startsWith(config.prefix + "ping")) {
+        message.delete(" ");
+        message.channel.send(":ping_pong: Pong! " + "``" + (new Date().getTime() - message.createdTimestamp) + "ms" + "``")
+            .then(m => m.delete(5000))
+    }
+    
 
     //say command
     if (message.content.startsWith(config.prefix + 'say')) {
@@ -142,13 +183,13 @@ bot.on("message", message => {
 }
     //KICK
     if (message.content.startsWith(config.prefix + "kick")) {
-        const user = message.mentions.users.first();
-        const member = message.guild.member(user);
+        const member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
-        if (theirperm == 4) {
-            message.channel.send(user + " has been kicked, say goodbye.");
-            user.sendMessage("You have been banned from our guild for " + args);
-            member.kick();
+        if (theirperm >= 3) {
+            message.channel.send(":white_check_mark:" + member + " has been kicked.");
+            member.send(":warning: You have been kicked from our server by " + message.author + "\n\nReason:\n```" + args + "```").then(() => {
+                member.kick();
+            });
         }
         if (theirperm <= 3) {
             message.channel.send("Sorry, you aren't able to do that.");
@@ -159,7 +200,7 @@ bot.on("message", message => {
     if (message.content.startsWith(config.prefix + "report")) {
         let member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
-        bot.channels.get('345993413688033280').send('@staff ,' + message.author + ' has reported ' + member + ' for ' + args);
+        bot.channels.get('345993413688033280').send('<@&342038243308601346>, ' + message.author + ' has reported ' + member + ' for ' + args);
         message.channel.send(':white_check_mark: Sucessfully Reported ' + member + '!')
     }
    
@@ -184,7 +225,7 @@ bot.on("message", message => {
     }
 
     // Refresh bot (necessary)
-    if (message.content == config.prefix + "r") {
+    if (message.content == config.prefix + "restart") {
         if (theirperm == 5) {
             //you can edit the text here   VVVV   to what u want the bot to say when its restarting
             message.channel.send(':white_check_mark: Restarting...').then(() => {
@@ -211,5 +252,5 @@ bot.login(config.token)
 bot.on("ready", function () {
     bot.user.setGame(config.prefix + "help");
     console.log('Bot Ready!');
-    bot.users.get('186989309369384960').send('Bot Ready!')
+    bot.channels.get('320651061423636490').send(":ok_hand:  Ready For Commands!")
 })
