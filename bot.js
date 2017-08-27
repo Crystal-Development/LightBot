@@ -229,6 +229,7 @@ bot.on("message", message => {
         if (theirperm == 5) {
             //you can edit the text here   VVVV   to what u want the bot to say when its restarting
             message.channel.send(':white_check_mark: Restarting...').then(() => {
+				console.log('Restarting bot...');
                 process.exitCode = 1;
                 process.exit();
 
