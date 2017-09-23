@@ -224,11 +224,22 @@ bot.on("message", message => {
         message.delete();
         let member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
-        bot.channels.get('345993413688033280').send('<@&342038243308601346>, ' + message.author + ' has reported ' + member + ' for ' + args);
+        bot.channels.get('345993413688033280').send('<@&342038243308601346>, ' + message.author + ' has reported ' + member + '\nReason: ```'+ args + '```');
         message.channel.send(':white_check_mark: Sucessfully Reported ' + member + '!')
             .then(m => m.delete(5000))
     }
-   
+
+    //link perms
+    if (message.content.startsWith(config.prefix + "permit")) {
+        message.delete();
+        let member = message.mentions.members.first();
+        member.addRole('360974519781031946');
+        message.channel.send(':white_check_mark: Permitted ' + member)
+            .then(m => m.delete(5000));
+        setTimeout(function () { member.removeRole('360974519781031946'); }, 5000);
+    }
+
+
    //maintenence mode
     if (message.content.startsWith(config.prefix + "maint")) {
         message.delete();
