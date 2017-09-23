@@ -142,6 +142,7 @@ bot.on("message", message => {
 
     //ban command
     if (message.content.startsWith(config.prefix + "ban")) {
+        message.delete();
         const member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
         if (theirperm >= 3) {
@@ -162,9 +163,29 @@ bot.on("message", message => {
             .then(m => m.delete(5000))
     }
     
+    //mute command
+    if (message.content.startsWith(config.prefix + 'mute')) {
+        message.delete();
+        const member = message.mentions.members.first();
+        member.addRole('325621766707871744');
+        member.removeRole('325387555287728139');
+        message.channel.send(':white_check_mark: Muted ' + member)
+           .then(m => m.delete(5000))
+    }
+
+    //unmute command
+    if (message.content.startsWith(config.prefix + 'unmute')) {
+        message.delete();
+        const member = message.mentions.members.first();
+        member.addRole('325387555287728139');
+        member.removeRole('325621766707871744');
+        message.channel.send(':white_check_mark: Unmuted ' + member)
+            .then(m => m.delete(5000))
+    }
 
     //say command
     if (message.content.startsWith(config.prefix + 'say')) {
+        if (message.author.id !== '186989309369384960') return;
         let args = message.content.split(" ").slice(1).join(" ");
         message.delete();
         message.channel.send(args);
@@ -172,6 +193,7 @@ bot.on("message", message => {
 
     //say embed command
     if (message.content.startsWith(config.prefix + 'embed')) {
+        if (message.author.id !== '186989309369384960') return;
         let args = message.content.split(" ").slice(1).join(" ");
         message.delete();
         message.channel.send({
@@ -183,6 +205,7 @@ bot.on("message", message => {
 }
     //KICK
     if (message.content.startsWith(config.prefix + "kick")) {
+        message.delete();
         const member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
         if (theirperm >= 3) {
@@ -198,13 +221,34 @@ bot.on("message", message => {
 
     //report command
     if (message.content.startsWith(config.prefix + "report")) {
+        message.delete();
         let member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
         bot.channels.get('345993413688033280').send('<@&342038243308601346>, ' + message.author + ' has reported ' + member + ' for ' + args);
         message.channel.send(':white_check_mark: Sucessfully Reported ' + member + '!')
+            .then(m => m.delete(5000))
     }
    
-   
+   //maintenence mode
+    if (message.content.startsWith(config.prefix + "maint")) {
+        message.delete();
+        if (message.author.id !== '186989309369384960') return;
+        bot.user.setPresence({ game: { name: "Under Maintenance", type: 0 } });
+        bot.user.setStatus("idle");
+        message.channel.send(':white_check_mark: Entering maintenence mode!')
+            .then(m => m.delete(5000))
+    }
+
+    //turn off maintenance mode
+    if (message.content.startsWith(config.prefix + "nomaint")) {
+        message.delete();
+        if (message.author.id !== '186989309369384960') return;
+        bot.user.setPresence({ game: { name: ".help | Online", type: 0 } });
+        bot.user.setStatus("online");
+        message.channel.send(':white_check_mark: Exiting maintenence mode!')
+            .then(m => m.delete(5000))
+    }
+
     //invite to ur own server
     if (message.content == config.prefix + "invite") {
         if (theirperm >= 3) {
@@ -226,6 +270,7 @@ bot.on("message", message => {
 
     // Refresh bot (necessary)
     if (message.content == config.prefix + "restart") {
+        message.delete();
         if (theirperm == 5) {
             //you can edit the text here   VVVV   to what u want the bot to say when its restarting
             message.channel.send(':white_check_mark: Restarting...').then(() => {
@@ -251,7 +296,8 @@ bot.on("message", message => {
 //* Startup stuff
 bot.login(config.token)
 bot.on("ready", function () {
-    bot.user.setGame(config.prefix + "help");
+    bot.user.setPresence({ game: { name: ".help | Online", type: 0 } });
     console.log('Bot Ready!');
     bot.channels.get('320651061423636490').send(":ok_hand:  Ready For Commands!")
+        .then(m => m.delete(5000))
 })
