@@ -1,5 +1,6 @@
 var Discord = require("discord.js");
 
+const chalk = require('chalk');
 
 var bot = new Discord.Client();
 
@@ -93,7 +94,7 @@ bot.on("message", message => {
     //help
     if (message.content.startsWith(config.prefix + "help")) {
         message.delete(" ");
-        message.author.send("LightBot Commands:\n```kick - Kick A User (Staff Only)\nban - Ban A User (Staff Only)\nsay - Repeats Your Message\nembed - Repeats You Message As An Embed\nreport <@mention> <reason> - Reports A User To Staff\nroll - Roll the Dice\nversion - Says The Bot's Version\nping - Shows The Bot's Ping\nrestart - Restarts The Bot (Staff Only)\ninvite - Sends Invite Link (Staff Only)\nnick - Sets a user's nickname (Staff ?Only)\nannounce - Sends a message to #news tagging everyone (Staff Only)```");
+        message.author.send("```kick - Kick A User (Staff Only)\nban - Ban A User (Staff Only)\nsay - Repeats Your Message (Owner Only)\nembed - Repeats You Message As An Embed (Owner Only)\nreport <@mention> <reason> - Reports A User To Staff\nroll - Roll the Dice\nversion - Says The Bot's Version\nping - Shows The Bot's Ping\nrestart - Restarts The Bot (Staff Only)\ninvite - Sends Invite Link (Owner Only)\nnick - Sets a user's nickname (Staff Only)\nannounce - Sends a message to #news tagging everyone (Staff Only)\nmaint - Puts bot in maintenance mode (Owner Only)\nnomaint - Exits maintenance mode (Owner Only)```");
     }
 
     // Simple roll the dice command
@@ -125,7 +126,16 @@ bot.on("message", message => {
         }
     }
 
-    
+
+
+    //nolinks  WIP
+    if (message.content.startsWith("http")) {
+        if (message.author.roles.has('360974519781031946')) {
+            null
+        } else {
+            message.delete();
+        }
+    }
 
     //announce
     if (message.content.startsWith(config.prefix + "announce")) {
@@ -145,14 +155,22 @@ bot.on("message", message => {
         message.delete();
         const member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
-        if (theirperm >= 3) {
-            message.channel.send(":white_check_mark:" + member + " has been banned.");
-            member.send(":warning: You have been banned from our server by " + message.author + "\n\nReason:\n```" + args + "```").then(() => {
-                member.ban();
-            });
+        if (member.hasPermission("ADMINISTRATOR")) {
+            message.channel.send(":x: That user is Staff!")
+                .then(m => m.delete(5000));
+            console.log(chalk.bold.red("[!]") + "Failed to ban user! (Staff)")
         }
-        if (theirperm <= 3) {
-            message.channel.send("Sorry, you aren't able to do that.");
+        else {
+            if (theirperm >= 3) {
+                message.channel.send(":white_check_mark:" + member + " has been banned.");
+                member.send(":warning: You have been banned from our server by " + message.author + "\n\nReason:\n```" + args + "```").then(() => {
+                    member.ban(args)
+                        .catch(e => console.log(e))
+                });
+            }
+            if (theirperm <= 3) {
+                message.channel.send("Sorry, you aren't able to do that.");
+            }
         }
     }
 
@@ -208,14 +226,22 @@ bot.on("message", message => {
         message.delete();
         const member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
-        if (theirperm >= 3) {
-            message.channel.send(":white_check_mark:" + member + " has been kicked.");
-            member.send(":warning: You have been kicked from our server by " + message.author + "\n\nReason:\n```" + args + "```").then(() => {
-                member.kick();
-            });
+        if (member.hasPermission("ADMINISTRATOR")) {
+            message.channel.send(":x: That user is Staff!")
+                .then(m => m.delete(5000));
+            console.log(chalk.bold.red("[!]") + "Failed to kick user! (Staff)")
         }
-        if (theirperm <= 3) {
-            message.channel.send("Sorry, you aren't able to do that.");
+        else {
+            if (theirperm >= 3) {
+                message.channel.send(":white_check_mark:" + member + " has been kicked.");
+                member.send(":warning: You have been kicked from our server by " + message.author + "\n\nReason:\n```" + args + "```").then(() => {
+                    member.kick(args)
+                        .catch(e => console.log(e))
+                });
+            }
+            if (theirperm <= 3) {
+                message.channel.send("Sorry, you aren't able to do that.");
+            }
         }
     }
 
@@ -235,7 +261,7 @@ bot.on("message", message => {
         let member = message.mentions.members.first();
         member.addRole('360974519781031946');
         message.channel.send(':white_check_mark: Permitted ' + member)
-            .then(m => m.delete(5000));
+            .then(m => m.delete(10000));
         setTimeout(function () { member.removeRole('360974519781031946'); }, 5000);
     }
 
@@ -247,7 +273,8 @@ bot.on("message", message => {
         bot.user.setPresence({ game: { name: "Under Maintenance", type: 0 } });
         bot.user.setStatus("idle");
         message.channel.send(':white_check_mark: Entering maintenence mode!')
-            .then(m => m.delete(5000))
+            .then(m => m.delete(5000));
+        console.log(chalk.bold.yellow("[!]") + "Entering Maintenance Mode!");
     }
 
     //turn off maintenance mode
@@ -257,13 +284,13 @@ bot.on("message", message => {
         bot.user.setPresence({ game: { name: ".help | Online", type: 0 } });
         bot.user.setStatus("online");
         message.channel.send(':white_check_mark: Exiting maintenence mode!')
-            .then(m => m.delete(5000))
+            .then(m => m.delete(5000));
+        console.log(chalk.bold.yellow("[!]") + "Exiting Maintenance Mode!");
     }
 
     //invite to ur own server
     if (message.content == config.prefix + "invite") {
-        if (theirperm >= 3) {
-            //you can edit the text here   VVVV   to what u want the bot to say
+        if (message.author.id !== '186989309369384960') {
             message.channel.send(':white_check_mark: Check your DMs!');
             message.author.send({
                 embed: {
@@ -274,31 +301,24 @@ bot.on("message", message => {
         }
 
         if (theirperm <= 3) {
-            //what the bot says if an unauthorized uses says "-restart"
             message.channel.send("Invalid permissions. Only administrators can do that.")
         }
     }
 
     // Refresh bot (necessary)
     if (message.content == config.prefix + "restart") {
-        message.delete();
         if (theirperm == 5) {
-            //you can edit the text here   VVVV   to what u want the bot to say when its restarting
-            message.channel.send(':white_check_mark: Restarting...').then(() => {
-				console.log('Restarting bot...');
+                message.delete();
+				console.log(chalk.bold.green('[!]') + chalk.white('Restarting Bot...'));
                 process.exitCode = 1;
                 process.exit();
-
-
-            });
-        }
+            }
 
         if (theirperm <= 5) {
-            //what the bot says if an unauthorized uses says "-restart"
+            message.delete();
             message.channel.send("Invalid permissions. Only administrators can do that.")
         }
     }
-
 })
 
 
@@ -308,7 +328,7 @@ bot.on("message", message => {
 bot.login(config.token)
 bot.on("ready", function () {
     bot.user.setPresence({ game: { name: ".help | Online", type: 0 } });
-    console.log('Bot Ready!');
+    console.log(chalk.bold.green('[!]') + chalk.white('Bot Ready!'));
     bot.channels.get('320651061423636490').send(":ok_hand:  Ready For Commands!")
         .then(m => m.delete(5000))
 })
