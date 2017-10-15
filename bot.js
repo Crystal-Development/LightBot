@@ -126,7 +126,13 @@ bot.on("message", message => {
         }
     }
 
-
+    //set bot game
+    if (message.content.startsWith(config.prefix + "setgame")) {
+        if (message.author.id !== '186989309369384960') return;
+        let args = message.content.split(" ").slice(1).join(" ");
+        bot.user.setPresence({ game: { name:  args , type: 0 } });
+        message.delete();
+    }
 
     //nolinks  WIP
     if (message.content.startsWith("http")) {
@@ -137,12 +143,20 @@ bot.on("message", message => {
         }
     }
 
+
     //announce
     if (message.content.startsWith(config.prefix + "announce")) {
         message.delete();
         let args = message.content.split(" ").slice(1).join(" ");
+        const newsembed = new Discord.RichEmbed()
+            .setTitle(" :loudspeaker: Announcement")
+            .setColor("#7289DA")
+            .setTimestamp()
+            .setDescription(args)
+            .setFooter(message.author.username)
         if (theirperm >= 3) {
-            bot.channels.get('323201519891513345').send("@everyone :loudspeaker: " + args)
+            bot.channels.get('323201519891513345').send("@everyone");
+            bot.channels.get('323201519891513345').send(newsembed);
             };
         
         if (theirperm <= 3) {
@@ -316,7 +330,7 @@ bot.on("message", message => {
 
         if (theirperm <= 5) {
             message.delete();
-            message.channel.send("Invalid permissions. Only administrators can do that.")
+            message.channel.send(":x: That command is staff only!")
         }
     }
 })
