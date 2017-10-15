@@ -1,3 +1,3 @@
 :restart
 node bot.js
-goto restar
+goto restart
