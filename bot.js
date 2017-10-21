@@ -99,11 +99,11 @@ bot.on("message", message => {
 
     // Simple roll the dice command
     if (message.content == config.prefix + "roll") { //command args
-
+        message.delete();
 
         var roll = Math.floor(Math.random() * 6) + 1; //math stuff
 
-        message.reply(" You rolled a " + roll + " !"); //bot replies
+        message.channel.send(":game_die: " + message.author + " rolled a " + "``" + roll + "``" + "!") //bot replies
     }
 
     // Version command
@@ -119,7 +119,7 @@ bot.on("message", message => {
         const member = message.mentions.members.first();
         let args = message.content.split(" ").slice(2).join(" ");
         member.setNickname(args);
-        message.channel.send(":white_check_mark: " + member + "'s nick has been changed.")
+        message.channel.send(":white_check_mark: " + args + "'s nick has been changed.")
             .then(m => m.delete(5000))
         if (theirperm <= 3) {
             message.channel.send("Sorry, you aren't able to do that.");
@@ -134,15 +134,18 @@ bot.on("message", message => {
         message.delete();
     }
 
-    //nolinks  WIP
-    if (message.content.startsWith("http")) {
+    
+    /* nolinks  WIP
+    var link = new RegExp('http')
+    if (message.content == (link)) {
+        
         if (message.author.roles.has('360974519781031946')) {
             null
         } else {
             message.delete();
         }
     }
-
+    */
 
     //announce
     if (message.content.startsWith(config.prefix + "announce")) {
@@ -321,15 +324,14 @@ bot.on("message", message => {
 
     // Refresh bot (necessary)
     if (message.content == config.prefix + "restart") {
+        message.delete();
         if (theirperm == 5) {
-                message.delete();
 				console.log(chalk.bold.green('[!]') + chalk.white('Restarting Bot...'));
                 process.exitCode = 1;
                 process.exit();
             }
 
         if (theirperm <= 5) {
-            message.delete();
             message.channel.send(":x: That command is staff only!")
         }
     }
