@@ -7,7 +7,7 @@ var bot = new Discord.Client();
 const config = require("./config.json");
 
 //*   Perms
-function GetPermissionLevel(user) {
+const GetPermissionLevel = (user) => {
     var guildmemberobject = true;
     if (typeof (user.guild) == "undefined") {
         guildmemberobject = false;
@@ -342,7 +342,7 @@ bot.on("message", message => {
 
 //* Startup stuff
 bot.login(config.token)
-bot.on("ready", function () {
+bot.on("ready", () => {
     bot.user.setPresence({ game: { name: ".help | Online", type: 0 } });
     console.log(chalk.bold.green('[!]') + chalk.white('Bot Ready!'));
     bot.channels.get('320651061423636490').send(":ok_hand:  Ready For Commands!")
