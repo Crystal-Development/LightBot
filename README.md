@@ -1,4 +1,4 @@
-Open source bot for my [discord server](https://discord.gg/4DRU2aU)
+[![Discord Badge](https://discordapp.com/api/guilds/320565396711276545/embed.png)](https://discord.io/thericefields)
 # This project has ended  
 I am no longer working on this. I will still merge pull requests if they are good.  
 If by any chance somone wants to convert my commands into their own ``.js`` files for implementation in  
