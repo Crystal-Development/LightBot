@@ -2,7 +2,7 @@
 # This project has ended  
 I am no longer working on this. I will still merge pull requests if they are good.  
 If by any chance somone wants to convert my commands into their own ``.js`` files for implementation in  
-my [new bot](https://github.com/crystal-development/supermemeboi-bot), that'd be nice.
+my [new bot (LightBot 2.0)](https://github.com/crystal-development/lightbot-2.0), that'd be nice.
 
 # Dependancies
 * Chalk
